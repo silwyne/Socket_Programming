@@ -1,11 +1,13 @@
+package nilian.window;
+
+import nilian.client.Client;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,9 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
-public class RunClient {
+public class ClientWindow {
 	public static JButton Username;
 	public static String username = null;
 	public static JButton Connect;
@@ -25,13 +26,9 @@ public class RunClient {
 	public static Thread ConnectingThread;
 	public static JButton sendButton ;
 	public static boolean Connected_to_the_server = false ;
-	public static void main(String[] args) throws UnknownHostException, IOException
-	{
-		SwingUtilities.invokeLater(() ->{
-			show();
-		});
-	}
-	private static void show()
+
+
+	public static void show()
 	{
 		frame = new JFrame();
 		frame.setTitle("Client");
@@ -69,40 +66,37 @@ public class RunClient {
 		    	openUsernameInputWindow();
 		    }
 		});
+
 		Connect = new JButton("Connect");
 		Connect.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	if(username == null)
-		    	{
+		    	if(username == null) {
 		    		JOptionPane.showMessageDialog(null, "First set a username", "Warning", JOptionPane.WARNING_MESSAGE);
-		    	}
-		    	else 
-		    	{
-					try 
-					{
-						ConnectingThread = new Thread(()->{
-							Connection();
-						});
+		    	} else {
+					try {
+						ConnectingThread = new Thread(ClientWindow::Connection);
 						ConnectingThread.start();
 					} 
 					catch (Exception e1) 
 					{
-						JOptionPane.showMessageDialog(null, "nilian.server.Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
 					} 
 		    	}
 		    }
 		});
+
 		sendButton = new JButton("Send");
 		sendButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	if(Connected_to_the_server) {
-			    	openSending();
+			    	SendMessageWindow.show();
 		    	}
 		    	else {
 					JOptionPane.showMessageDialog(null, "First Connect to a server!", "Warning", JOptionPane.WARNING_MESSAGE);
 		    	}
 		    }
 		});
+
 		textArea.setEditable(false);
 		Connect.setFocusable(false);
 		textArea.setFocusable(true);
@@ -116,8 +110,10 @@ public class RunClient {
 		frame.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 		frame.setVisible(true);
 	}
-	
-	
+
+	/**
+	 * Handles all about getting username from user!
+	 */
 	private static void openUsernameInputWindow() 
 	{
         // Create the JFrame for username input
@@ -133,84 +129,65 @@ public class RunClient {
         	textField.setText(username); // Set the last username as the initial text value
         }
         else {
-        	textField.setText("atleast 4 charachters");
+        	textField.setText("at least 4 characters");
         }
         panel.add(textField);
 
         // Create a button to retrieve the username
-        JButton button = new JButton("Save");
-        button.addActionListener(e -> {
-            
-        	String username = textField.getText();
-            if(username.length()>4)
-            {
-                JOptionPane.showMessageDialog(usernameFrame, "Username: " + username);
-            	RunClient.username = username ;
-            }
-            else
-            {
-	    		JOptionPane.showMessageDialog(null, "atleast 4 charachters", "Warning", JOptionPane.WARNING_MESSAGE);
-            }
-            usernameFrame.dispose();// Close the username input window
-            // Enable the "Run" button in the initial window
-        });
-        panel.add(button);
+		JButton button = getSaveUserNameButton(textField, usernameFrame);
+		panel.add(button);
         // Disable the "Run" button in the initial window
         // Add the panel to the usernameFrame
         usernameFrame.setLocationRelativeTo(null);
         usernameFrame.getContentPane().add(panel);
         usernameFrame.pack();
         usernameFrame.setVisible(true);
-       
     }
-	 public static void Connection()
-     {
+
+	/**
+	 * Returns a button to set or save the username
+	 * @param textField the field containing the username
+	 * @param usernameFrame frame that takes the username
+	 * @return a button to get the username!
+	 */
+	private static JButton getSaveUserNameButton(JTextField textField, JFrame usernameFrame) {
+		JButton button = new JButton("Save");
+		button.addActionListener(e -> {
+			String username = textField.getText();
+			if(username.length()>4)
+			{
+				JOptionPane.showMessageDialog(usernameFrame, "Username: " + username);
+				ClientWindow.username = username ;
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "at least 4 characters", "Warning", JOptionPane.WARNING_MESSAGE);
+			}
+			usernameFrame.dispose();// Close the username input window
+			// Enable the "Run" button in the initial window
+		});
+		return button;
+	}
+
+
+	/**
+	 * Tries to connect to the server on port 1234
+	 */
+	public static void Connection() {
      	try 
      	{
 			socket = new Socket("localHost" ,1234);
-			client c = new client(socket , username);
-			c.listenFormessage();
-			openSending();
-			RunClient.textArea.setText("Connected to the nilian.server.Server !");
+			Client c = new Client(socket , username);
+			c.listenForMessage();
+			SendMessageWindow.show();
+			ClientWindow.textArea.setText("Connected to the Server !");
 			Connected_to_the_server = true ;
 		} 
      	catch (Exception e1) 
 		{
-			JOptionPane.showMessageDialog(null, "nilian.server.Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
 		} 
 			
-     }
-	 private static void openSending() 
-	 {
-		//Create the JFrame for username input
-	        JFrame sending = new JFrame("sendind");
-	        sending.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
 
-	        // Create a JPanel to hold components
-	        JPanel panel = new JPanel();
-
-	        // Create a JTextField for username input
-	        JTextField textField = new JTextField(20);
-	        textField.setText("write something!"); // Set the last username as the initial text value
-	        panel.add(textField);
-
-	        // Create a button to retrieve the username
-	        JButton button = new JButton("send");
-	        button.addActionListener(e -> {
-	            
-	        	String message = textField.getText();
-	        	client.sendMessage(message) ;
-	            sending.dispose();// Close the username input window
-	            // Enable the "Run" button in the initial window
-	        });
-	        panel.add(button);
-	        // Disable the "Run" button in the initial window
-	        // Add the panel to the usernameFrame
-	        sending.setLocationRelativeTo(null);
-	        sending.getContentPane().add(panel);
-	        sending.pack();
-	        sending.setVisible(true);
-	       
-	 }
 }
-

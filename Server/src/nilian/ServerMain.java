@@ -9,7 +9,7 @@ import java.io.IOException;
  *
  * @author seyed mohamad hasan tabatabaei
  */
-public class Main {
+public class ServerMain {
 
     public static void main(String[] args) throws IOException {
         ServerWindow.show();

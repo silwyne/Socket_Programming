@@ -8,7 +8,7 @@ import java.net.Socket;
 
 /**
  * Main server object.
- * Gets each client connection and let the ClientHandler.Class to handle the rest
+ * Gets each nilian.client.client connection and let the ClientHandler.Class to handle the rest
  *
  * @author seyed mohamad hasan tabatabaei
  */
@@ -33,7 +33,7 @@ public class Server {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			ServerWindow.textArea.setText(ServerWindow.textArea.getText() + "\na new client has been connected!");
+			ServerWindow.textArea.setText(ServerWindow.textArea.getText() + "\na new nilian.client.client has been connected!");
 			ClientHandler clientHandler = new ClientHandler(socket);
 			Thread thread = new Thread(clientHandler);
 			thread.start();

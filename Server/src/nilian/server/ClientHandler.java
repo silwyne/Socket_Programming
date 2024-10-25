@@ -62,7 +62,7 @@ public class ClientHandler implements Runnable {
 
 	/**
 	 * This broadCasts a message to all connected Clients!
-	 * @param message some client message to other Clients
+	 * @param message some nilian.client.client message to other Clients
 	 */
 	public void broadcastMessage(String message)
 	{
