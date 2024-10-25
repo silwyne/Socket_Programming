@@ -1,5 +1,8 @@
 # Socket programing sample
 
+#### [project state : Finished!]
+
+
 This project is an example Code of `socket programming` written fully in `Java` !\
 In this project we have a `server` and multiple `clients` which can chat with each other!
 
