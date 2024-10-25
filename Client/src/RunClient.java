@@ -87,7 +87,7 @@ public class RunClient {
 					} 
 					catch (Exception e1) 
 					{
-						JOptionPane.showMessageDialog(null, "Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
+						JOptionPane.showMessageDialog(null, "nilian.server.Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
 					} 
 		    	}
 		    }
@@ -171,12 +171,12 @@ public class RunClient {
 			client c = new client(socket , username);
 			c.listenFormessage();
 			openSending();
-			RunClient.textArea.setText("Connected to the Server !");
+			RunClient.textArea.setText("Connected to the nilian.server.Server !");
 			Connected_to_the_server = true ;
 		} 
      	catch (Exception e1) 
 		{
-			JOptionPane.showMessageDialog(null, "Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(null, "nilian.server.Server is OFF", "Warning", JOptionPane.WARNING_MESSAGE);
 		} 
 			
      }

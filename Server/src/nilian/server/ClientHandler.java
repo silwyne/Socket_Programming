@@ -1,3 +1,5 @@
+package nilian.server;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -6,14 +8,22 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class ClientHandler implements Runnable{
+/**
+ * This class handles connected clients!
+ * Makes it possible for clients to see each others messages.
+ *
+ * @author seyed mohamad hasan tabatabaei
+ */
+public class ClientHandler implements Runnable {
 
-	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<ClientHandler>();
+	//List of Shared Connections between all Clients!
+	public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 	private Socket soc;
 	private BufferedReader br ;
 	private BufferedWriter bw ;
 	private String clientUsername ;
-	
+
+
 	public ClientHandler(Socket socket)
 	{
 		try
@@ -29,6 +39,11 @@ public class ClientHandler implements Runnable{
 			closeEverything(soc, br , bw);
 		}
 	}
+
+
+	/**
+	 * This runnable listens for clients messages and broadcasts them to other clients!
+	 */
 	@Override
 	public void run() {
 		String messageFromClient;
@@ -45,6 +60,10 @@ public class ClientHandler implements Runnable{
 		}
 	}
 
+	/**
+	 * This broadCasts a message to all connected Clients!
+	 * @param message some client message to other Clients
+	 */
 	public void broadcastMessage(String message)
 	{
 		for(ClientHandler clientHandler : clientHandlers)
@@ -64,15 +83,17 @@ public class ClientHandler implements Runnable{
 		}
 	}
 	
-	public void removeClienthandler()
+
+	public void removeClientHandler()
 	{
 		clientHandlers.remove(this);
 		broadcastMessage("SERVER: "+clientUsername+" has left the chat");
 	}
-	
+
+
 	public void closeEverything(Socket soc , BufferedReader br, BufferedWriter bw)
 	{
-		removeClienthandler();
+		removeClientHandler();
 		try
 		{
 			if(br != null)
@@ -89,12 +110,8 @@ public class ClientHandler implements Runnable{
 			}
 		}catch(IOException e)
 		{
-			e.printStackTrace();
+			e.printStackTrace(System.out);
 		}
 	}
-	
-	
-	
-	
-	
+
 }
