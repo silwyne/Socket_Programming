@@ -12,8 +12,8 @@ In this project we have a `server` and multiple `clients` which can chat with ea
 
 # Pictures
 
-    server
+    Server
 ![nilian.server.Server picture](images/server.png)
 
-    nilian.client.Client
+    Client
 ![Client Picture](images/client.png)
